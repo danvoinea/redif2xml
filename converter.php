@@ -7,13 +7,6 @@ $filename   = 'jsserr.rdf';
 /* DO NOT EDIT BEYOND THIS POINT. NO NEED TO DO SO */
 
 
-$file = file_get_contents($filename);
-
-$file = preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $file);
-
-$posts = explode('Template-Type: ReDIF-Article 1.0', $file);
-unset($posts[0]);
-
 function find_in_post($post, $needle)
 {
     $array = explode("\n", $post);
@@ -24,6 +17,47 @@ function find_in_post($post, $needle)
         }
     }
 }
+
+function libxml_display_error($error)
+{
+    $return = "<br/>\n";
+    switch ($error->level) {
+        case LIBXML_ERR_WARNING:
+            $return .= "<b>Warning $error->code</b>: ";
+            break;
+        case LIBXML_ERR_ERROR:
+            $return .= "<b>Error $error->code</b>: ";
+            break;
+        case LIBXML_ERR_FATAL:
+            $return .= "<b>Fatal Error $error->code</b>: ";
+            break;
+    }
+    $return .= trim($error->message);
+    if ($error->file) {
+        $return .= " in <b>$error->file</b>";
+    }
+    $return .= " on line <b>$error->line</b>\n";
+    return $return;
+}
+
+function libxml_display_errors()
+{
+    $errors = libxml_get_errors();
+    foreach ($errors as $error) {
+        print libxml_display_error($error);
+    }
+    libxml_clear_errors();
+}
+
+
+
+$file = file_get_contents($filename);
+
+$file = preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $file);
+
+$posts = explode('Template-Type: ReDIF-Article 1.0', $file);
+unset($posts[0]);
+
 
 //header('Content-Disposition: attachment; filename="' . $filename . '.xml"');
 header("HTTP/1.1 200 OK");
@@ -106,36 +140,6 @@ foreach ($posts as $post) {
 
 $xml .= '</records>';
 
-function libxml_display_error($error)
-{
-    $return = "<br/>\n";
-    switch ($error->level) {
-        case LIBXML_ERR_WARNING:
-            $return .= "<b>Warning $error->code</b>: ";
-            break;
-        case LIBXML_ERR_ERROR:
-            $return .= "<b>Error $error->code</b>: ";
-            break;
-        case LIBXML_ERR_FATAL:
-            $return .= "<b>Fatal Error $error->code</b>: ";
-            break;
-    }
-    $return .= trim($error->message);
-    if ($error->file) {
-        $return .= " in <b>$error->file</b>";
-    }
-    $return .= " on line <b>$error->line</b>\n";
-    return $return;
-}
-
-function libxml_display_errors()
-{
-    $errors = libxml_get_errors();
-    foreach ($errors as $error) {
-        print libxml_display_error($error);
-    }
-    libxml_clear_errors();
-}
 
 libxml_use_internal_errors(true);
 
