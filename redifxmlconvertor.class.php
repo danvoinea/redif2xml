@@ -28,7 +28,8 @@ class RedifXMLConvert {
 	    	foreach ($array as $value) {
 	        	$strings = explode(": ", $value);
 	       		if ($strings[0] == $needle) {
-		            return $strings[1];
+			    unset($strings[0]);
+			    return implode(": ", $strings);
 		        }
 		}
     	}
