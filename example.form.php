@@ -81,6 +81,10 @@ body {
 
 	<div class="container">
 		<div class="row">
+			<div class="col-lg-12">
+				RDF XML converter. More info and source code at <a href="https://github.com/danvoinea/redif2xml">https://github.com/danvoinea/redif2xml</a>
+			</div>
+
 			<div class="col-lg-6">
 
 
