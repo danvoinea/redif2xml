@@ -8,9 +8,6 @@ if (isset($_POST['convertor'])){
         header("HTTP/1.1 200 OK");
         header('X-Robots-Tag: noindex, follow', true);
 
-	print_r($_FILES);
-die();
-
 	$filename=$_FILES['fileToUpload']['tmp_name'];
 
 	switch ($_POST['convertor']){
@@ -19,6 +16,7 @@ die();
 			$issn       = $_POST['inputISSN'];
 			$publisher  = $_POST['inputPublisher']; 
 			$convertor = new RedifXMLConvert($issn,$publisher,$filename,$schemafile);
+			$extension='.xml';
 			$return = $convertor->redif2xml();
 
 		break;
@@ -28,11 +26,12 @@ die();
 			$repechandle = $_POST['inputHandle'];
 			$convertor = new RedifXMLConvert(NULL,NULL,$filename,$schemafile,$repechandle);
 			$return    = $convertor->xml2redif();
+			$extension='.rdf';
 		break;
 	}
 	
         if ($_POST['download']=="download"){
-                header('Content-Disposition: attachment; filename='.$filename);
+                header('Content-Disposition: attachment; filename='.$_FILES['fileToUpload']['name'].$extension);
         }
 
 	echo $return;
