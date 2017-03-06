@@ -2,36 +2,49 @@
 require('redifxmlconvertor.class.php');
 $schemafile = 'doajArticles.xsd'; 
 
-if ($download==1){
-	header('Content-Disposition: attachment; filename='.$filename);
-	header("HTTP/1.1 200 OK");
-	header('X-Robots-Tag: noindex, follow', true);
-	header('Content-Type: application/xml; charset=utf-8');
 
+if (isset($_POST['convertor'])){
+
+        header("HTTP/1.1 200 OK");
+        header('X-Robots-Tag: noindex, follow', true);
+
+        if ($_POST['download']=="download"){
+                header('Content-Disposition: attachment; filename='.$filename);
+        }
+
+	$filename=$_FILES['fileToUpload']['tmp_name'];
+
+	switch ($_POST['convertor']){
+		case "redif2xml":
+			header('Content-Type: application/xml; charset=utf-8');
+
+			$issn       = $_POST['inputISSN'];
+			$publisher  = $_POST['inputPublisher']; 
+
+			$convertor = new RedifXMLConvert($issn,$publisher,$filename,$schemafile);
+			$return = $convertor->redif2xml();
+
+			echo $return;
+
+
+		break;
+
+		case "xml2redif";
+	                header('Content-Type: text/plain; charset=utf-8');
+
+			$repechandle = $_POST['inputHandle'];
+
+			$convertor = new RedifXMLConvert(NULL,NULL,$filename,$schemafile,$repechandle);
+			$return    = $convertor->xml2redif();
+
+			echo $return;
+
+	break;
+	}
+	
+	die();
 }
 
-//redif 2 xml
-/*
-$issn       = '2392-9863';	// ISSN
-$publisher  = 'Editura Sitech';	// PUBLISHER NAME
-$filename   = 'jsserr.rdf';	// SOURCE FILE
-
-$convertor = new RedifXMLConvert($issn,$publisher,$filename,$schemafile);
-$return = $convertor->redif2xml();
-
-echo $return;
-*/
-
-//xml 2 redif
-/* 
-$repechandle = "edt:jsserr";
-$filename    = 'jsserr.rdf.xml';	// SOURCE FILE
-
-$convertor = new RedifXMLConvert(NULL,NULL,$filename,$schemafile,$repechandle);
-$return    = $convertor->xml2redif();
-
-echo $return;
-*/
 
 ?>
 <html>
@@ -88,17 +101,17 @@ body {
 			<div class="col-lg-6">
 
 
-    <form class="form"  action="example.form.php" method="post" enctype="multipart/form-data">
+    <form class="form" action="example.form.php" method="post" enctype="multipart/form-data">
         <h2 class="form-heading">XML 2 REDIF</h2>
         <label for="inputHandle" class="sr-only">Enter RePEc handle</label>
-        <input type="text" id="inputHandle" class="form-control" placeholder="Enter RePEc handle (format edt:jsserr)" required autofocus>
+        <input type="text" name="inputHandle" id="inputHandle" class="form-control" placeholder="Enter RePEc handle (format edt:jsserr)" required autofocus>
 
         <label for="fileToUpload" class="sr-only">Select file</label>
 	<input type="file" name="fileToUpload" id="fileToUpload" class="form-control" placeholder="Select file" required>
 
         <div class="checkbox">
           <label>
-            <input type="checkbox" value="download"> Download
+            <input type="checkbox" value="download" name="download"> Download
           </label>
         </div>
 
@@ -116,10 +129,10 @@ body {
         <h2 class="form-heading">REDIF 2 XML</h2>
 
         <label for="inputPublisher" class="sr-only">Enter Publisher</label>
-        <input type="text" id="inputPublisher" class="form-control" placeholder="Enter Publisher" required autofocus>
+        <input type="text" name="inputPublisher" id="inputPublisher" class="form-control" placeholder="Enter Publisher" required autofocus>
 
-        <label for="enterISSN" class="sr-only">Enter ISSN</label>
-        <input type="text" id="enterISSN" class="form-control" placeholder="Enter ISSN" required autofocus>
+        <label for="inputISSN" class="sr-only">Enter ISSN</label>
+        <input type="text" name="inputISSN" id="inputISSN" class="form-control" placeholder="Enter ISSN" required autofocus>
 
 
         <label for="fileToUpload" class="sr-only">Select file</label>
@@ -127,7 +140,7 @@ body {
 
         <div class="checkbox">
           <label>
-            <input type="checkbox" value="download"> Download
+            <input type="checkbox" value="download" name="download"> Download
           </label>
         </div>
 
