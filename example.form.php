@@ -8,40 +8,35 @@ if (isset($_POST['convertor'])){
         header("HTTP/1.1 200 OK");
         header('X-Robots-Tag: noindex, follow', true);
 
-        if ($_POST['download']=="download"){
-                header('Content-Disposition: attachment; filename='.$filename);
-        }
+	print_r($_FILES);
+die();
 
 	$filename=$_FILES['fileToUpload']['tmp_name'];
 
 	switch ($_POST['convertor']){
 		case "redif2xml":
 			header('Content-Type: application/xml; charset=utf-8');
-
 			$issn       = $_POST['inputISSN'];
 			$publisher  = $_POST['inputPublisher']; 
-
 			$convertor = new RedifXMLConvert($issn,$publisher,$filename,$schemafile);
 			$return = $convertor->redif2xml();
-
-			echo $return;
-
 
 		break;
 
 		case "xml2redif";
 	                header('Content-Type: text/plain; charset=utf-8');
-
 			$repechandle = $_POST['inputHandle'];
-
 			$convertor = new RedifXMLConvert(NULL,NULL,$filename,$schemafile,$repechandle);
 			$return    = $convertor->xml2redif();
-
-			echo $return;
-
-	break;
+		break;
 	}
 	
+        if ($_POST['download']=="download"){
+                header('Content-Disposition: attachment; filename='.$filename);
+        }
+
+	echo $return;
+
 	die();
 }
 
