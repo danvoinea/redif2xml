@@ -134,7 +134,7 @@ class RedifXMLConvert {
 		header('X-Robots-Tag: noindex, follow', true);
 		header('Content-Type: application/xml; charset=utf-8');
 		$xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
-		$xml .= '<!-- generator="SSERR XML DOAJ" -->' . "\n";
+                $xml .= '<!-- generator="REDIF2XML https://github.com/danvoinea/redif2xml" -->' . "\n";
 
 		$xml .= '<records>';
 
